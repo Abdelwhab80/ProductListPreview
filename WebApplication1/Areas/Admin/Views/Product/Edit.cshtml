@@ -1,0 +1,39 @@
+﻿@model Product
+
+
+<form method="post" enctype="multipart/form-data">
+    <div class="border p-3 mt-4">
+        <div class="row pd-2">
+            <h2 class="text-primary">Update Product</h2>
+            <hr />
+        </div>
+        <div class="mb-3">
+            <label asp-for="Title"></label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Description"></label>
+            <input asp-for="Description" class="form-control" />
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Price"></label>
+            <input asp-for="Price" class="form-control" />
+            <span asp-validation-for="Price" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <select asp-for="CategoryID" asp-items="ViewBag.CategoryList">
+                <option disabled selected>--Select Category--</option>
+            </select>
+            <span asp-validation-for="CategoryID" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <img src="@Model.ImageaUrl" width="20%" />
+            <input value="@Model.ImageaUrl" type="file" name="file" class="form-control" />
+            <span asp-validation-for="ImageaUrl" class="text-danger"></span>
+        </div>
+        <button style="background-color: #93c572; border-color: #93c572; border-radius: 15px;" type="submit" class="btn btn-primary" style="width:150px">Update</button>
+    </div>
+
+</form>
