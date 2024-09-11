@@ -17,7 +17,6 @@ namespace ProductListPreview.DataAcsess.Repository
         {
             _db = db;
             this.dbset = _db.Set<T>();
-            //_db.products.Include(u => u.category).Include(u => u.CategoryID);
         }
         public void Add(T entity)
         {

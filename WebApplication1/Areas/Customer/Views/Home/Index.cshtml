@@ -1,59 +1,83 @@
 ﻿@model List<Product>
 
- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+
+<div class="container">
+    <div class="full-width-container">
+        <div class="search-box">
+            <div class="input-group">
+                <input type="search" id="search-box" class="form-control rounded-start" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+                <span class="input-group-text" id="search-addon">
+                    <i class="fas fa-search"></i>
+                </span>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button class="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Sort By
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#" data-sort="A-Z">A-Z</a></li>
+                <li><a class="dropdown-item" href="#" data-sort="Z-A">Z-A</a></li>
+                <li><a class="dropdown-item" href="#" data-sort="L to H">Price:Low To High</a></li>
+                <li><a class="dropdown-item" href="#" data-sort="H to L">Price:High To Low</a></li>
+
+            </ul>
+        </div>
+    </div>
+</div>
+<div id="product-list">
+    @await Html.PartialAsync("_ProductList",Model)
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#search-box').on('input', function () {
+            var searchTerm = $(this).val().toLowerCase();
+            if (searchTerm === "") {
+                $.ajax({
+                    url:'/Customer/Home/Search',
+                    data:{searchTerm: "" },
+                    success: function (result) {
+                        $('#product-list').html(result);
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("AJAX error:", status, error);
+                    }
+                });
+            }
+            else{
+                $.ajax({
+                    url: '/Customer/Home/Search',
+                    data: { searchTerm: searchTerm },
+                        success: function (result) {
+                        $('#product-list').html(result);
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("AJAX error:", status, error);
+                    }
+                });
+            }
+
+        });
+        $('.dropdown-item').on('click', function (e) {
+            var sortOption = $(this).data('sort'); $.ajax({
+                url: '/Customer/Home/Sort',
+                data: { sortOption: sortOption },
+                success: function (result) {
+                    $('#product-list').html(result);
+                },
+                error: function (xhr, status, error) {
+                    console.log("AJAX error:", status, error);
+                }
+            });
+        });
+        
+    });
     
 
-    <div class="container">
-        <div class="full-width-container">
-            <div class="search-box">
-                <div class="input-group">
-                    <input type="search" class="form-control rounded-start" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
-                    <span class="input-group-text" id="search-addon">
-                        <i class="fas fa-search"></i>
-                    </span>
-                </div>
-            </div>
-            <div class="dropdown">
-                <button class="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Dropdown button
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
-                </ul>
-            </div>
-        </div>
-    </div> 
 
-<div class="row pb-3">
-    @foreach (var product in Model)
-    {
-        <div class="col-lg-3 col-sm-6">
-            <div class="row p-2">
-                <div class="col-12 p-1">
-                    <div class="card border-0 p-3 shadow-sm border-top border-5 rounded">
-                        <img src="@product.ImageaUrl" class="card-img-top rounded" />
-                        <div class="card-body pb-0">
-                            <div class="d-flex justify-content-between align-items-center pl-1">
-                                <p class="card-title h6 text-dark  mb-0">@product.Title</p>
-                                <p class="card-title h5 text-dark opacity-75 text-uppercase mb-0">
-                                    <i class="bi bi-suit-heart"></i>
-                                </p>
-                            </div>
-
-                            <div class="pl-1">
-                                <p class="text-dark h6 text-uppercase text-left">
-                                    <span>@product.Price.ToString("c")</span>
-                                </p>
-                            </div>
-                        </div>
-
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
-</div>
+</script>

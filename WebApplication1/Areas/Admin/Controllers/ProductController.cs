@@ -1,11 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ProductListPreview.DataAcsess.Repository.IRepository;
 using ProductListPreview.Models.Models;
+using System.Diagnostics;
+using Utility;
 
 namespace ProductListPreview.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.Role_Admin)]
+
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -36,18 +41,9 @@ namespace ProductListPreview.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Create(Product obj, IFormFile? file)
         {
-            if (file == null)
-            {
-                ModelState.AddModelError("ImageaUrl", "Please upload an image file.");
-            }
-
-            if (obj.CategoryID == 0)
-            {
-                ModelState.AddModelError("CategoryID", "Please select a category.");
-            }
-
-
-            string wwwRootPath = _webHostEnvironment.WebRootPath;
+            //if (ModelState.IsValid)
+            //{
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
             if (file != null)
             {
                 string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
@@ -65,15 +61,23 @@ namespace ProductListPreview.Areas.Admin.Controllers
 
                 obj.ImageaUrl = @"\images\Product\" + fileName;
             }
+            
+                _unitOfWork.ProductRepository.Add(obj);
+                _unitOfWork.Save();
+                TempData["Success"] = "Product Created Successfully";
+                return RedirectToAction("Index");
+            //}
+            //else
+            //{
+                
 
-            _unitOfWork.ProductRepository.Add(obj);
-            _unitOfWork.Save();
-            TempData["Success"] = "Product Created Successfully";
-            return RedirectToAction("Index");
+            //    return View(obj);
+
+            //}
 
 
 
-            return View(obj);
+
         }
 
 
@@ -146,5 +150,10 @@ namespace ProductListPreview.Areas.Admin.Controllers
             return RedirectToAction("Index");
 
         }
+       
+
+
+
+
     }
 }
